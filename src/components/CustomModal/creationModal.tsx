@@ -19,9 +19,10 @@ const CustomModalComponent: React.FC<CustomModalProps> = ({
   children,
   onSubmit,
   buttonText,
+  size ,
 }) => {
   return (
-    <Modal show={show} onHide={onClose} backdrop="static" keyboard={false} centered>
+    <Modal show={show} onHide={onClose} backdrop="static" keyboard={false} centered  size="lg">
       <Modal.Header closeButton>
         <Modal.Title className="h5">{title}</Modal.Title>
       </Modal.Header>
@@ -40,3 +41,4 @@ const CustomModalComponent: React.FC<CustomModalProps> = ({
 };
 
 export default CustomModalComponent;
+

@@ -1,16 +1,17 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
-import { confirmationIcon } from "assets";
+import { confirmationIcon, warningIcon } from "assets";
 
 interface ConfirmationModalProps {
-  show: boolean;                 
-  onHide: () => void;             
-  onConfirm: () => void;        
-  isLoading?: boolean;         
-  title?: string;                
-  message?: string;             
-  confirmText?: string;          
-  cancelText?: string;            
+  show: boolean;
+  onHide: () => void;
+  onConfirm: () => void;
+  isLoading?: boolean;
+  title?: string;
+  message?: string;
+  confirmText?: string;
+  cancelText?: string;
+  mode: "create" | "edit";
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -22,7 +23,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   message = "Do you want to proceed with this action?",
   confirmText = "Yes",
   cancelText = "No",
+  mode,
 }) => {
+
+
   return (
     <Modal
       show={show}
@@ -37,9 +41,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       <Modal.Body>
         <div className="flex flex-wrap flex-col gap-4 text-center">
           <img
-            src={confirmationIcon}
+            src={confirmationIcon || warningIcon}
             className="block mx-auto"
-            alt="questionIcon"
+            alt="warning-Icon"
             width={80}
           />
           <p>{message}</p>

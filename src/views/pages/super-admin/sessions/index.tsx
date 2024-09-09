@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import "./style.scss";
 import CustomModalComponent from "components/CustomModal/creationModal";
 import CustomTableComponent from "components/CustomModal/tableModal";
 import ConfirmationModal from "components/CustomModal/confirmationModal";
+import DeleteConfirmationModal from "components/CustomModal/deleteModal";
+import { toastError } from "helpers/toastHelper";
 
 interface TableRow {
   id: string;
@@ -17,18 +20,28 @@ const Session = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [sessionData, setSessionData] = useState({ start_date: "", end_date: "", description: "" });
-  const [errors, setErrors] = useState({ start_date: "", end_date: "" });
-
   const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState<TableRow[]>([]);
-
   const [showCreateEditModal, setShowCreateEditModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [deletingId, setDeletingId] = useState<string[] | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errors, setErrors] = useState<{ start_date?: string; end_date?: string }>({});
 
-  const [currentAction, setCurrentAction] = useState<"save" | "update">("save");
+  useEffect(() => {
+    // Mock data fetching
+    setTimeout(() => {
+      setTableData([
+        { id: "1", sno: 1, name: "Session 1", start_date: "2023-01-01", end_date: "2023-01-05", description: "Description 1" },
+        { id: "2", sno: 2, name: "Session 2", start_date: "2023-02-01", end_date: "2023-02-05", description: "Description 2" },
+      ]);
+      setLoading(false);
+    }, 1000);
+  }, []);
 
-  // Define columns for the table
+  // / Define columns for the table //
   const columns = [
     { header: "S.No", key: "sno" },
     { header: "Session Name", key: "name" },
@@ -37,28 +50,31 @@ const Session = () => {
     { header: "Description", key: "description", width: "40%" },
   ];
 
-  // Fetch or set data (mock data for now)
-  useEffect(() => {
-    setTimeout(() => {
-      // Simulate API call
-      setTableData([
-        { id: "1", sno: 1, name: "Session 1", start_date: "2023-01-01", end_date: "2023-01-05", description: "Description 1" },
-        { id: "2", sno: 2, name: "Session 2", start_date: "2023-02-01", end_date: "2023-02-05", description: "Description 2" },
-        // Add more rows as needed
-      ]);
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  const handleEdit = (id: string, row: any) => {
-    setIsEditing(true);
-    setSessionData(row);
-    setShowCreateEditModal(true);
+  const handleModalOpen = (id: string) => {
+    setIsEditing(false);
+    setShowModal(true);
+    setDeletingId([id]);
   };
 
-  const handleDelete = (id: string) => {
-    setCurrentAction("delete");
-    setShowConfirmationModal(true);
+  const handleModalClose = () => {
+    setShowModal(false);
+    setDeletingId(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deletingId !== null) {
+      setIsDeleting(true);
+      try {
+        setShowModal(false);
+        setDeletingId(null);
+      } catch (error) {
+        toastError("Error deleting session");
+      } finally {
+        setIsDeleting(false);
+      }
+    } else {
+      toastError("Cannot delete: No ID provided");
+    }
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +84,7 @@ const Session = () => {
   const handleAddNew = () => {
     setIsEditing(false);
     setSessionData({ start_date: "", end_date: "", description: "" });
-    setErrors({ start_date: "", end_date: "" }); // Clear errors
+    setErrors({ start_date: "", end_date: "" });
     setShowCreateEditModal(true);
   };
 
@@ -88,38 +104,42 @@ const Session = () => {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     const { start_date, end_date } = sessionData;
     const newErrors: { start_date?: string; end_date?: string } = {};
-
+  
     if (!start_date) {
       newErrors.start_date = "Please select start date.";
     }
     if (!end_date) {
       newErrors.end_date = "Please select end date.";
     }
-
+  
     if (Object.keys(newErrors).length > 0) {
+      // Assuming `setErrors` accepts an object where properties can be optional
       setErrors(newErrors);
     } else {
       setShowConfirmationModal(true);
     }
   };
+  
 
   const handleConfirm = () => {
     setIsLoading(true);
-    // Perform the save/update action
     setTimeout(() => {
-      console.log("Data saved or updated!");
       setIsLoading(false);
       setShowCreateEditModal(false);
       setShowConfirmationModal(false);
     }, 1000);
   };
 
+  const handleEdit = ()=>{
+
+  }
+
   return (
     <>
-      <div className="container">
+      <div className={`container ${showConfirmationModal ? 'blur-effect' : ''}`}>
         <div className="inner-section d-flex gap-1 flex-wrap items-center justify-content-between">
           <div className="left-area">
             <h6>Session List</h6>
@@ -132,23 +152,11 @@ const Session = () => {
         </div>
       </div>
 
-      {/* Action area (search and filter) */}
-      <div className="container">
+      <div className={`container ${showConfirmationModal ? 'blur-effect' : ''}`}>
         <div className="action-area">
           <div className="search-div">
             <span className="search-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#a5a5a5"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-search"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a5a5a5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search">
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.3-4.3" />
               </svg>
@@ -163,18 +171,16 @@ const Session = () => {
           </div>
         </div>
 
-        {/* Table Component here */}
         <CustomTableComponent
           columns={columns}
           data={tableData}
           loading={loading}
           onEdit={handleEdit}
-          onDelete={handleDelete}
+          onDelete={handleModalOpen} 
           emptyMessage="No sessions available"
         />
       </div>
 
-      {/* Custom Modal Component for Add/Edit Session */}
       <CustomModalComponent
         show={showCreateEditModal}
         onClose={handleCreateEditModalClose}
@@ -182,7 +188,10 @@ const Session = () => {
         isEditing={isEditing}
         onSubmit={handleFormSubmit}
         buttonText={isEditing ? "Update" : "Save"}
+        // className={showConfirmationModal ? 'blur-effect' : ''}
       >
+
+
         {/* Modal Fields */}
         <div className="form-group mb-4">
           <label htmlFor="start_date">
@@ -231,17 +240,24 @@ const Session = () => {
         </div>
       </CustomModalComponent>
 
-      {/* Confirmation Modal */}
       <ConfirmationModal
+        mode="edit"
         show={showConfirmationModal}
         onHide={handleConfirmationModalClose}
         onConfirm={handleConfirm}
         isLoading={isLoading}
-        // title="Confirm Action"
-        message="Do you want to create this session?"
         confirmText="Save"
         cancelText="Cancel"
       />
+
+      <DeleteConfirmationModal
+        show={showModal}
+        onHide={handleModalClose}
+        onConfirmDelete={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
+
+
     </>
   );
 };

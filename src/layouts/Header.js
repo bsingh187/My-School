@@ -15,7 +15,7 @@ import {
 } from "reactstrap";
 import Logo from "./Logo";
 import { ReactComponent as LogoWhite } from "../assets/images/logos/materialprowhite.svg";
-import user1 from "../assets/images/users/user4.jpg";
+import { AvatarIcon } from "assets";
 
 const Header = () => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -67,7 +67,7 @@ const Header = () => {
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle color="transparent">
             <img
-              src={user1}
+              src={AvatarIcon}
               alt="profile"
               className="rounded-circle"
               width="30"

@@ -3,22 +3,22 @@ import React from "react";
 import { Table, Spinner } from "react-bootstrap";
 
 interface TableColumn {
-  header: string;  
-  key: string;     
-  width?: string;  
+  header: string;
+  key: string;
+  width?: string;
 }
 
 interface TableRow {
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 interface CustomTableProps {
-  columns: TableColumn[];      
+  columns: TableColumn[];
   data: TableRow[];
-  loading: boolean;            
-  onEdit?: (id: string, row: TableRow) => void;  
-  onDelete?: (id: string) => void;           
-  emptyMessage?: string;        
+  loading: boolean;
+  onEdit?: (id: string, row: TableRow) => void;
+  onDelete?: (id: string) => void;
+  emptyMessage?: string;
 }
 
 const CustomTableComponent: React.FC<CustomTableProps> = ({
@@ -39,7 +39,7 @@ const CustomTableComponent: React.FC<CustomTableProps> = ({
         <Table responsive>
           <thead>
             <tr>
-              {columns.map((col, index) => (
+              {columns?.map((col, index) => (
                 <th key={index} style={{ width: col.width || "auto" }}>
                   {col.header}
                 </th>
@@ -48,10 +48,10 @@ const CustomTableComponent: React.FC<CustomTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 ? (
-              data.map((row, rowIndex) => (
+            {data?.length > 0 ? (
+              data?.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {columns.map((col, colIndex) => (
+                  {columns?.map((col, colIndex) => (
                     <td key={colIndex}>{row[col.key] || "N/A"}</td>
                   ))}
                   <td>
@@ -60,10 +60,10 @@ const CustomTableComponent: React.FC<CustomTableProps> = ({
                         <button
                           title="Edit"
                           style={{ border: "none" }}
-                          onClick={() => onEdit(row.id, row)}
+                          onClick={() => onEdit(row?.id, row)}
                         >
                           <img
-                            src={editIcon} 
+                            src={editIcon}
                             alt="edit-icon"
                             className="cursor-pointer"
                           />
@@ -73,10 +73,10 @@ const CustomTableComponent: React.FC<CustomTableProps> = ({
                         <button
                           title="Delete"
                           style={{ border: "none" }}
-                          onClick={() => onDelete(row.id)}
+                          onClick={() => onDelete(row?.id)}  
                         >
                           <img
-                            src={deleteIcon} 
+                            src={deleteIcon}
                             alt="delete-icon"
                             className="cursor-pointer"
                           />

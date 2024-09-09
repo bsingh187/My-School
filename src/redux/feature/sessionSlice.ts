@@ -112,3 +112,51 @@
 // export const selectedSessionDataList = (state: RootState) => {
 //   return state.sessionState?.sessionList ?? [];
 // };
+
+
+
+
+
+
+// Slice without api async //
+
+
+
+// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+// import { RootState } from "redux/store";
+
+// interface SessionDetails {
+//   id: string;
+//   start_date: string;
+//   end_date: string;
+//   description: string;
+// }
+
+// interface SessionState {
+//   sessionList: SessionDetails[];
+//   isLoading: boolean;
+//   error: string | null;
+// }
+
+// const initialState: SessionState = {
+//   sessionList: [],
+//   isLoading: false,
+//   error: null,
+// };
+
+// export const sessionSlice = createSlice({
+//   name: "sessionState",
+//   initialState,
+//   reducers: {
+//     addSession: (state, action: PayloadAction<SessionDetails>) => {
+//       state.sessionList.push(action.payload);
+//     },
+//     clearSessions: () => initialState,
+//   },
+// });
+
+// export const { clearSessions, addSession } = sessionSlice.actions;
+
+// export const selectedSessionDataList = (state: RootState) => state.sessionState.sessionList ?? [];
+
+// export default sessionSlice.reducer;
