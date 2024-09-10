@@ -172,57 +172,81 @@ const School = () => {
 
 
     // input value logic here ///
-    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     const { id, value } = e.target;
-    //     setSchoolData((prevData) => ({ ...prevData, [id]: value }));
-    //     setErrors((prevErrors) => ({ ...prevErrors, [id]: "" }));
-    // };
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { id, value } = e.target;
+        setSchoolData((prevData) => ({ ...prevData, [id]: value }));
+        setErrors((prevErrors) => ({ ...prevErrors, [id]: "" }));
+    };
 
     // submit logic here //
     const handleFormSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        const {
-            logo_url,
-            name,
-            address,
-            country,
-            state,
-            city,
-            contact_person,
-            email,
-            phone,
-            landline,
-            school_url,
-            affiliated_to,
-            affiliation_number,
-            sub_domain,
-        } = schoolData;
+  const {
+    logo_url,
+    name,
+    address,
+    country,
+    state,
+    city,
+    contact_person,
+    email,
+    phone,
+    landline,
+    school_url,
+    sub_domain,
+  } = schoolData;
 
-        const newErrors: { [key: string]: string } = {};
+  const newErrors: { [key: string]: string } = {};
 
-        // Example validation logic - you can customize it as needed
-        if (!logo_url) newErrors.logo_url = "School logo is required.";
-        if (!name) newErrors.name = "School name is required.";
-        if (!address) newErrors.address = "Address is required.";
-        if (!city) newErrors.city = "City is required.";
-        if (!contact_person) newErrors.contact_person = "Contact person is required.";
-        if (!email) newErrors.email = "Email is required.";
-        if (!phone) newErrors.phone = "Phone number is required.";
-        if (!sub_domain) newErrors.sub_domain = "Sub domain is required.";
-        if (!country) newErrors.country = "Sub domain is required.";
-        if (!state) newErrors.state = "Sub domain is required.";
-        if (!landline) newErrors.landline = "Sub domain is required.";
-        if (!school_url) newErrors.school_url = "Sub domain is required.";
-        if (!affiliated_to) newErrors.affiliated_to = "Sub domain is required.";
-        if (!affiliation_number) newErrors.affiliation_number = "Sub domain is required.";
+  // Validate fields and set errors if any
+  if (!logo_url) newErrors.logo_url = "Please enter a school logo.";
+  if (!name) newErrors.name = "Please enter the school name.";
+  if (!address) newErrors.address = "Please enter the address.";
+  if (!city) newErrors.city = "Please enter the city.";
+  if (!contact_person) newErrors.contact_person = "Please enter the contact person.";
+  if (!email) {
+    newErrors.email = "Please enter the email address.";
+  } else if (!email.includes('@') || !email.includes('.')) {
+    newErrors.email = "Invalid email.";
+  }
+  if (!phone) newErrors.phone = "Please enter the phone number.";
+  if (!sub_domain) newErrors.sub_domain = "Please enter the sub domain.";
+  if (!country) newErrors.country = "Please enter the country.";
+  if (!state) newErrors.state = "Please enter the state.";
+  if (!landline) newErrors.landline = "Please enter the landline number.";
+  if (!school_url) newErrors.school_url = "Please enter the school url.";
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-        } else {
-            setShowConfirmationModal(true);
-        }
-    };
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors); // If there are errors, do not proceed further
+    return; // Return early to avoid executing further code
+  }
+
+  // If no errors, reset errors and close the modal
+  setErrors({ 
+    logo_url: "",
+    name: "",
+    address: "",
+    country: "",
+    state: "",
+    city: "",
+    contact_person: "",
+    email: "",
+    phone: "",
+    landline: "",
+    school_url: "",
+    affiliated_to: "",
+    affiliation_number: "",
+    sub_domain: "",
+  });
+
+  console.log("Form submitted:", schoolData);
+
+  // Close the modal
+  setShowCreateEditModal(false);
+};
+
+
 
     // Image File selection logic here //
 
@@ -245,6 +269,8 @@ const School = () => {
     const handleResetImage = () => {
         setSelectedFile(null);
     };
+
+    
 
 
     return (
@@ -309,237 +335,244 @@ const School = () => {
 
 
                 <CustomModalComponent
-                    show={showCreateEditModal}
+                    show={showCreateEditModal} 
                     onClose={handleCreateEditModalClose}
                     title={isEditing ? "Update School" : "Create New School"}
                     isEditing={isEditing}
                     onSubmit={handleFormSubmit}
                     buttonText={isEditing ? "Update" : "Save"}
-                // className={showConfirmationModal ? 'blur-effect' : ''}
+                    size="lg"
                 >
+                    <div className="row position-relative">
+                        <div className="col-12 col-lg-12">
+                            <div className="form-group mb-4">
+                                <label htmlFor="file-upload">School Logo</label>
+                                <div className="profile-picture position-relative">
+                                    <label htmlFor="file-upload" className="custom-file-upload">
+                                        <img
+                                            src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Default-avatar.jpg"
+                                            className="default-avatar"
+                                            alt=""
+                                        />
+                                        <img
+                                            src={
+                                                selectedFile
+                                                    ? URL.createObjectURL(selectedFile)
+                                                    : schoolData?.logo_url || file
+                                            }
+                                            className="uploaded-avatar"
+                                        />
+                                    </label>
+                                    {schoolData?.logo_url && (
+                                        <div
+                                            className="remove-logo-icon"
+                                            onClick={handleResetImage}
+                                        >
+                                            <img src={CrossIcon} alt="remove-logo" />
+                                            <span>Remove Profile Image</span>
+                                        </div>
+                                    )}
 
-                    <div className="col-12 col-lg-12">
-                        <div className="form-group mb-4">
-                            <label htmlFor="file-upload">School Logo</label>
-                            <div className="profile-picture position-relative">
-                                <label htmlFor="file-upload" className="custom-file-upload">
-                                    <img
-                                        src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Default-avatar.jpg"
-                                        className="default-avatar"
-                                        alt=""
+                                    <input
+                                        id="logo_url"
+                                        type="file"
+                                        accept=".jpeg, .png"
+                                        className=""
+                                        onChange={handleFileChange}
                                     />
-                                    <img
-                                        src={
-                                            selectedFile
-                                                ? URL.createObjectURL(selectedFile)
-                                                : schoolData?.logo_url || file
-                                        }
-                                        className="uploaded-avatar"
-                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    School Name<span className="form_required">*</span>
                                 </label>
-                                {schoolData?.logo_url && (
-                                    <div
-                                        className="remove-logo-icon"
-                                        onClick={handleResetImage}
-                                    >
-                                        <img src={CrossIcon} alt="remove-logo" />
-                                        <span>Remove Profile Image</span>
-                                    </div>
-                                )}
-
                                 <input
-                                    id="logo_url"
-                                    type="file"
-                                    accept=".jpeg, .png"
-                                    className=""
-                                    onChange={handleFileChange}
+                                    id="name"
+                                    type="text"
+                                    className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                                    placeholder="Enter school name"
+                                    value={schoolData?.name}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.name && <div className="error">{errors.name}</div>}
+
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    School Address<span className="form_required">*</span>
+                                </label>
+                                <textarea
+                                    id="address"
+                                    className={`form-control ${errors.address ? "is-invalid" : ""}`}
+                                    placeholder="Enter school address"
+                                    value={schoolData?.address}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.address && <div className="error">{errors.address}</div>}
+
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    Country<span className="form_required">*</span>
+                                </label>
+                                <input
+                                    id="country"
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter country"
+                                    value={schoolData?.country}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.country && <div className="error">{errors.country}</div>}
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    State<span className="form_required">*</span>
+                                </label>
+                                <input
+                                    id="state"
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter state"
+                                    value={schoolData?.state}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.state && <div className="error">{errors.state}</div>}
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    City<span className="form_required">*</span>
+                                </label>
+                                <input
+                                    id="city"
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter city"
+                                    value={schoolData?.city}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.city && <div className="error">{errors.city}</div>}
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    Contact Person<span className="form_required">*</span>
+                                </label>
+                                <input
+                                    id="contact_person"
+                                    type="text"
+                                    className={`form-control ${errors.contact_person ? "is-invalid" : ""}`}
+                                    placeholder="Enter contact person"
+                                    value={schoolData?.contact_person}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.contact_person && <div className="error">{errors.contact_person}</div>}
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    Email Id<span className="form_required">*</span>
+                                </label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    className="form-control"
+                                    placeholder="Enter email id"
+                                    value={schoolData?.email}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.email && <div className="error">{errors.email}</div>}
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="phone">
+                                    Contact Number<span className="form_required">*</span>
+                                </label>
+                                <input
+                                    id="phone"
+                                    type="text"
+                                    className="form-control no-arrows"
+                                    placeholder="Enter contact number"
+                                    value={schoolData?.phone}
+                                    onChange={(e) => {
+                                        const newValue = e.target.value;
+                                        if (/^\d*$/.test(newValue) && newValue.length <= 10) {
+                                            handleInputChange(e);
+                                        }
+                                    }}
+                                    maxLength={10}
+                                />
+                                {errors.phone && <div className="error">{errors.phone}</div>}
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">
+                                    Sub Domain<span className="form_required">*</span>
+                                </label>
+                                <input
+                                    id="sub_domain"
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter sub domain"
+                                    value={schoolData?.sub_domain}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.sub_domain && <div className="error">{errors.sub_domain}</div>}
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">Landline</label>
+                                <input
+                                    id="landline"
+                                    type="text"
+                                    className="form-control no-arrows"
+                                    placeholder="Enter landline number"
+                                    value={schoolData?.landline}
+                                    onChange={(e) => {
+                                        const filtered = e.target.value.replace(/[^0-9]/g, "");
+                                        handleInputChange(e);
+                                    }}
                                 />
                             </div>
                         </div>
-                    </div>
 
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                School Name<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="name"
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter school name"
-                                value={schoolData?.name}
-                            // onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                School Address<span className="form_required">*</span>
-                            </label>
-                            <textarea
-                                id="address"
-                                name="address"
-                                className="form-control"
-                                placeholder="Enter school address"
-                                value={schoolData?.address}
-                            // onChange={handleChange}
-                            ></textarea>
-
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                Country<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="country"
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter country"
-                                value={schoolData?.country}
-                            // onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                State<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="state"
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter state"
-                                value={schoolData?.state}
-                            // onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                City<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="city"
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter city"
-                                value={schoolData?.city}
-                            // onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                Contact Person<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="contact_person"
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter contact person"
-                                value={schoolData?.contact_person}
-                            // onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                Email Id<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="email"
-                                type="email"
-                                className="form-control"
-                                placeholder="Enter email id"
-                                value={schoolData?.email}
-                            // onChange={handleChange}
-                            />
-
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="phone">
-                                Contact Number<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="phone"
-                                type="text"
-                                className="form-control no-arrows"
-                                placeholder="Enter contact number"
-                                value={schoolData?.phone}
-                                // onChange={(e) => {
-                                //     const newValue = e.target.value;
-                                //     if (/^\d*$/.test(newValue) && newValue.length <= 10) {
-                                //         handleChange(e);
-                                //     }
-                                // }}
-                                maxLength={10}
-                            />
-
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">
-                                Sub Domain<span className="form_required">*</span>
-                            </label>
-                            <input
-                                id="sub_domain"
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter sub domain"
-                                value={schoolData?.sub_domain}
-                            // onChange={handleChange}
-                            />
-
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">Landline</label>
-                            <input
-                                id="landline"
-                                type="text"
-                                className="form-control no-arrows"
-                                placeholder="Enter landline number"
-                                value={schoolData?.landline}
-                            // onChange={(e) => {
-                            //     const filtered = e.target.value.replace(/[^0-9]/g, "");
-                            //     handleChange(e);
-                            // }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-lg-4">
-                        <div className="form-group mb-4">
-                            <label htmlFor="">School URL</label>
-                            <input
-                                id="school_url"
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter school url"
-                                value={schoolData?.school_url}
-                            // onChange={handleChange}
-                            />
+                        <div className="col-12 col-lg-4">
+                            <div className="form-group mb-4">
+                                <label htmlFor="">School URL</label>
+                                <input
+                                    id="school_url"
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter school url"
+                                    value={schoolData?.school_url}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
                     </div>
 

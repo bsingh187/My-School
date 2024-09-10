@@ -9,8 +9,8 @@ interface CustomModalProps {
   children: React.ReactNode;
   onSubmit: (e: React.FormEvent) => void;
   buttonText: string;
+  size?: "sm" | "lg" | "xl";
 }
-
 const CustomModalComponent: React.FC<CustomModalProps> = ({
   show,
   onClose,
@@ -19,15 +19,15 @@ const CustomModalComponent: React.FC<CustomModalProps> = ({
   children,
   onSubmit,
   buttonText,
-  size ,
+  size,
 }) => {
   return (
-    <Modal show={show} onHide={onClose} backdrop="static" keyboard={false} centered  size="lg">
+    <Modal show={show} onHide={onClose} backdrop="static" keyboard={false} centered size={size}>
       <Modal.Header closeButton>
         <Modal.Title className="h5">{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form action="" className="horizontal-form" onSubmit={onSubmit}>
+        <form className="horizontal-form" onSubmit={onSubmit}>
           {children}
           <div className="form-group mb-4">
             <button className="w-full custom-active-button rounded-lg" type="submit">
@@ -39,6 +39,7 @@ const CustomModalComponent: React.FC<CustomModalProps> = ({
     </Modal>
   );
 };
+
 
 export default CustomModalComponent;
 

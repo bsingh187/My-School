@@ -116,13 +116,16 @@ const Session = () => {
     }
   
     if (Object.keys(newErrors).length > 0) {
-      // Assuming `setErrors` accepts an object where properties can be optional
       setErrors(newErrors);
     } else {
-      setShowConfirmationModal(true);
+      setErrors({});
+      console.log("Form submitted:" );
+
+      setShowCreateEditModal(false); 
     }
   };
   
+
 
   const handleConfirm = () => {
     setIsLoading(true);
